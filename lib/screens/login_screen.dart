@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -30,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 80),
+                SizedBox(height: screenHeight * 0.12),
 
                 // Reality Public School Logo
                 Container(
@@ -42,43 +43,43 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 60),
+                SizedBox(height: screenHeight * 0.085),
 
                 // Student/Employee Label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text(
                       'The Reality Public School ! ${isStudent ? 'STUDENT' : 'EMPLOYEE'}',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                SizedBox(height: screenHeight * 0.01),
 
                 // Username Field
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextField(
                         controller: usernameController,
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                         decoration: InputDecoration(
                           hintText: 'User Name',
                           hintStyle: const TextStyle(
                             color: Colors.white54,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                           enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white54, width: 1),
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                SizedBox(height: screenHeight * 0.02),
 
                 // Password Field
                 Padding(
@@ -102,13 +103,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                     decoration: const InputDecoration(
                       hintText: 'Password',
                       hintStyle: TextStyle(
                         color: Colors.white54,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white54, width: 1),
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
 
                 // Forgot Password and Login Button Row
                 Padding(
@@ -146,8 +147,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Container(
-                        height: 50,
-                        width: 120,
+                        height: 40,
+                        width: 100,
                         decoration: BoxDecoration(
                           color: const Color(0xFF8ac63e),
                           borderRadius: BorderRadius.circular(25),
@@ -167,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'LOGIN',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
