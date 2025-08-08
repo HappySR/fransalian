@@ -45,11 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 SizedBox(height: screenHeight * 0.085),
 
-                // Student/Employee Label
+                // Student/Employee Label - Now with consistent padding
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Align(
-                    alignment: Alignment.center,
+                  child: Container(
+                    width: double.infinity,
                     child: Text(
                       'The Reality Public School ! ${isStudent ? 'STUDENT' : 'EMPLOYEE'}',
                       style: const TextStyle(
@@ -57,39 +57,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
 
-                SizedBox(height: screenHeight * 0.01),
+                SizedBox(height: screenHeight * 0.02),
 
                 // Username Field
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      TextField(
-                        controller: usernameController,
-                        style: const TextStyle(
-                          color: Colors.white70,
+                  child: Container(
+                    width: double.infinity,
+                    child: TextField(
+                      controller: usernameController,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'User Name',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
                           fontSize: 14,
                         ),
-                        decoration: InputDecoration(
-                          hintText: 'User Name',
-                          hintStyle: const TextStyle(
-                            color: Colors.white54,
-                            fontSize: 14,
-                          ),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white54, width: 1),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 1.5),
-                          ),
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54, width: 1),
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 1.5),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
 
@@ -98,96 +97,103 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Password Field
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                    decoration: const InputDecoration(
-                      hintText: 'Password',
-                      hintStyle: TextStyle(
-                        color: Colors.white54,
+                  child: Container(
+                    width: double.infinity,
+                    child: TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      style: const TextStyle(
+                        color: Colors.white70,
                         fontSize: 14,
                       ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white54, width: 1),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 1.5),
+                      decoration: const InputDecoration(
+                        hintText: 'Password',
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54, width: 1),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 1.5),
+                        ),
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: screenHeight * 0.03),
 
-                // Forgot Password and Login Button Row
+                // Forgot Password and Login Button Row - Now spans full width consistently
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ForgotPasswordScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 40,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF8ac63e),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Handle login
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ForgotPasswordScreen(),
+                              ),
+                            );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
                           child: const Text(
-                            'LOGIN',
+                            'Forgot password?',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
                               fontWeight: FontWeight.w600,
+                              fontSize: 14,
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          height: 40,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF8ac63e),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Handle login
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            child: const Text(
+                              'LOGIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 60),
+                SizedBox(height: screenHeight * 0.02),
 
-                // Employee/Student Toggle
+                // Employee/Student Toggle - Now with consistent padding and width
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: Colors.white54, width: 1),
+                        top: BorderSide(color: Colors.white54, width: 1),
                       ),
                     ),
                     child: GestureDetector(
@@ -197,12 +203,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(top: screenHeight * 0.02),
                         child: Text(
                           isStudent ? 'Login as Employee? Click here' : 'Login as Student? Click here',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -211,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 80),
+                SizedBox(height: screenHeight * 0.08),
 
                 // EDNECT Logo
                 Container(
@@ -223,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
               ],
             ),
           ),
