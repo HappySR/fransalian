@@ -1,5 +1,7 @@
 import 'package:ednect/screens/forgot_password_screen.dart';
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import 'webview_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,8 +12,61 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isStudent = true;
+  bool _isLoading = false;
+  String? _errorMessage;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Future<void> _handleLogin() async {
+    if (usernameController.text.trim().isEmpty || passwordController.text.trim().isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter both username and password';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      Map<String, dynamic>? result;
+
+      if (isStudent) {
+        result = await ApiService.studentLogin(
+          usernameController.text.trim(),
+          passwordController.text.trim(),
+        );
+      } else {
+        result = await ApiService.employeeLogin(
+          usernameController.text.trim(),
+          passwordController.text.trim(),
+        );
+      }
+
+      if (result != null && result['responseValue'] == 1) {
+        String loginUrl = result['responseString'];
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => WebViewScreen(url: loginUrl),
+          ),
+        );
+      } else {
+        setState(() {
+          _errorMessage = 'Invalid credentials. Please try again.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Login failed. Please check your connection and try again.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +157,29 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  // Error Message
+                  if (_errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.red.withOpacity(0.3)),
+                        ),
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
 
                   SizedBox(height: screenHeight * 0.02),
 
@@ -170,9 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(25),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
-                                // Handle login
-                              },
+                              onPressed: _isLoading ? null : _handleLogin,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
@@ -180,7 +256,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(25),
                                 ),
                               ),
-                              child: const Text(
+                              child: _isLoading
+                                  ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                                  : const Text(
                                 'LOGIN',
                                 style: TextStyle(
                                   color: Colors.white,
