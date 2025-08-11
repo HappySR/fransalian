@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:open_file/open_file.dart';
-import 'package:dio/dio.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../services/api_service.dart';
 import 'login_screen.dart';
 
@@ -18,231 +16,230 @@ class WebViewScreen extends StatefulWidget {
 }
 
 class _WebViewScreenState extends State<WebViewScreen> {
-  late final WebViewController controller;
+  WebViewController? controller;
   bool isLoading = true;
   bool hasError = false;
-  bool isDownloading = false;
-  double downloadProgress = 0.0;
-  String downloadFileName = '';
+  String? currentApiKey;
+  bool isInitialized = false;
+  Set<String> handledPdfUrls = {}; // To prevent infinite loops
 
   @override
   void initState() {
     super.initState();
-    _requestPermissions();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (String url) {
-            setState(() {
-              isLoading = true;
-              hasError = false;
-            });
-
-            print('Page started: $url');
-
-            // Check for logout URLs
-            if (url.contains('/mob_start.aspx') ||
-                url.contains('/logout') ||
-                url.endsWith('/x') ||
-                url.endsWith('/X') ||
-                url.toLowerCase().contains('/x9f4xf')) {
-              _handleAutoLogout();
-            }
-
-            // Check if URL is a direct file download
-            if (_isDownloadableFile(url)) {
-              _downloadFile(url);
-              return;
-            }
-          },
-          onPageFinished: (String url) {
-            setState(() {
-              isLoading = false;
-            });
-          },
-          onWebResourceError: (WebResourceError error) {
-            setState(() {
-              isLoading = false;
-              hasError = true;
-            });
-          },
-          onNavigationRequest: (NavigationRequest request) {
-            // Check if the request is for a downloadable file
-            if (_isDownloadableFile(request.url)) {
-              _downloadFile(request.url);
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
+    _initializeWebView();
   }
 
-  Future<void> _requestPermissions() async {
-    if (Platform.isAndroid) {
-      await Permission.storage.request();
-      if (await Permission.storage.isDenied) {
-        await Permission.manageExternalStorage.request();
-      }
-    }
-  }
-
-  bool _isDownloadableFile(String url) {
-    // List of file extensions that should be downloaded
-    final downloadableExtensions = [
-      '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
-      '.txt', '.csv', '.zip', '.rar', '.jpg', '.jpeg', '.png', '.gif',
-      '.mp4', '.mp3', '.avi', '.mov', '.wav'
-    ];
-
-    String lowerUrl = url.toLowerCase();
-    return downloadableExtensions.any((ext) => lowerUrl.contains(ext));
-  }
-
-  String _getFileExtension(String url) {
+  Future<void> _initializeWebView() async {
     try {
-      Uri uri = Uri.parse(url);
-      String path = uri.path;
-      return path.substring(path.lastIndexOf('.')).toLowerCase();
+      // Get API key for authenticated requests
+      currentApiKey = await ApiService.getApiKey();
+
+      controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setUserAgent('Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36')
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageStarted: (String url) {
+              if (!mounted) return;
+              setState(() {
+                isLoading = true;
+                hasError = false;
+              });
+
+              print('Page started: $url');
+
+              // Check for logout URLs
+              if (url.contains('/mob_start.aspx') ||
+                  url.contains('/logout') ||
+                  url.endsWith('/x') ||
+                  url.endsWith('/X') ||
+                  url.toLowerCase().contains('/x9f4xf')) {
+                _handleAutoLogout();
+              }
+            },
+            onPageFinished: (String url) {
+              if (!mounted) return;
+              setState(() {
+                isLoading = false;
+              });
+              print('Page finished: $url');
+            },
+            onWebResourceError: (WebResourceError error) {
+              if (!mounted) return;
+              setState(() {
+                isLoading = false;
+                hasError = true;
+              });
+              print('WebResource error: ${error.description}');
+            },
+            onNavigationRequest: (NavigationRequest request) {
+              final url = request.url;
+              print('Navigation request: $url');
+
+              // Check if the URL is a PDF file and hasn't been handled yet
+              if (_isPdfUrl(url.toLowerCase()) && !handledPdfUrls.contains(url)) {
+                handledPdfUrls.add(url); // Mark as handled to prevent loops
+                _handlePdfNavigation(url);
+                return NavigationDecision.prevent;
+              }
+
+              // Let all other requests proceed normally
+              return NavigationDecision.navigate;
+            },
+          ),
+        );
+
+      // Load initial URL with API key if needed
+      await _loadUrlWithAuth(widget.url);
+
+      if (mounted) {
+        setState(() {
+          isInitialized = true;
+        });
+      }
     } catch (e) {
-      return '';
-    }
-  }
-
-  String _getFileName(String url) {
-    try {
-      Uri uri = Uri.parse(url);
-      String path = uri.path;
-      String fileName = path.substring(path.lastIndexOf('/') + 1);
-      if (fileName.isEmpty) {
-        String extension = _getFileExtension(url);
-        fileName = 'download_${DateTime.now().millisecondsSinceEpoch}$extension';
+      print('Error initializing WebView: $e');
+      if (mounted) {
+        setState(() {
+          hasError = true;
+          isLoading = false;
+          isInitialized = true;
+        });
       }
-      return fileName;
-    } catch (e) {
-      return 'download_${DateTime.now().millisecondsSinceEpoch}';
     }
   }
 
-  Future<String> _getDownloadPath() async {
-    Directory? directory;
-
-    if (Platform.isAndroid) {
-      // Try to get the Downloads directory
-      directory = Directory('/storage/emulated/0/Download');
-      if (!await directory.exists()) {
-        directory = await getExternalStorageDirectory();
-      }
-    } else if (Platform.isIOS) {
-      directory = await getApplicationDocumentsDirectory();
+  bool _isPdfUrl(String url) {
+    // Check for PDF file extension
+    if (url.endsWith('.pdf')) {
+      return true;
     }
 
-    return directory?.path ?? '';
+    // Check for PDF content type in URL parameters
+    if (url.contains('content-type=application/pdf') ||
+        url.contains('type=pdf') ||
+        url.contains('.pdf?') ||
+        url.contains('.pdf#')) {
+      return true;
+    }
+
+    // Check for common PDF serving patterns
+    if (url.contains('/pdf/') ||
+        url.contains('viewpdf') ||
+        url.contains('downloadpdf') ||
+        url.contains('showpdf') ||
+        (url.contains('report') && url.contains('pdf')) ||
+        url.contains('/WebSrv/Fee/') && url.contains('.pdf')) {
+      return true;
+    }
+
+    return false;
   }
 
-  Future<void> _downloadFile(String url) async {
-    try {
-      setState(() {
-        isDownloading = true;
-        downloadProgress = 0.0;
-        downloadFileName = _getFileName(url);
-      });
+  Future<void> _loadUrlWithAuth(String url) async {
+    if (controller == null) return;
 
-      String downloadPath = await _getDownloadPath();
-      String filePath = '$downloadPath/$downloadFileName';
-
-      // Create Dio instance for downloading
-      Dio dio = Dio();
-
-      await dio.download(
-        url,
-        filePath,
-        onReceiveProgress: (received, total) {
-          if (total != -1) {
-            setState(() {
-              downloadProgress = received / total;
-            });
-          }
+    if (currentApiKey != null && url.contains('realitypublicschool.in')) {
+      // For school domain URLs, add API key to headers
+      await controller!.loadRequest(
+        Uri.parse(url),
+        headers: {
+          'APIKey': currentApiKey!,
+          'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36',
         },
       );
-
-      setState(() {
-        isDownloading = false;
-        downloadProgress = 0.0;
-      });
-
-      // Show success message and option to open file
-      _showDownloadCompleteDialog(filePath);
-
-    } catch (e) {
-      setState(() {
-        isDownloading = false;
-        downloadProgress = 0.0;
-      });
-
-      _showErrorDialog('Download failed: ${e.toString()}');
+    } else {
+      await controller!.loadRequest(Uri.parse(url));
     }
   }
 
-  void _showDownloadCompleteDialog(String filePath) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Download Complete'),
-          content: Text('File downloaded successfully: $downloadFileName'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _openFile(filePath);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8ac63e),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Open File'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Future<void> _handlePdfNavigation(String pdfUrl) async {
+    print('Handling PDF navigation: $pdfUrl');
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _openFile(String filePath) async {
     try {
-      final result = await OpenFile.open(filePath);
+      // Show immediate feedback
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Loading PDF...'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Color(0xFF8ac63e),
+          ),
+        );
+      }
 
-      if (result.type != ResultType.done) {
-        // If can't open with default app, show message
-        _showErrorDialog('No app found to open this file type');
+      // Try external launch first for better PDF handling
+      bool launched = await _tryExternalPdfLaunch(pdfUrl);
+
+      if (!launched) {
+        // If external launch failed, load in WebView with Google Docs viewer
+        await _loadPdfInWebView(pdfUrl);
       }
     } catch (e) {
-      _showErrorDialog('Error opening file: ${e.toString()}');
+      print('Error handling PDF: $e');
+      // Final fallback - load directly in WebView
+      if (controller != null) {
+        await controller!.loadRequest(Uri.parse(pdfUrl));
+      }
+    }
+  }
+
+  Future<bool> _tryExternalPdfLaunch(String pdfUrl) async {
+    try {
+      final Uri pdfUri = Uri.parse(pdfUrl);
+
+      if (await canLaunchUrl(pdfUri)) {
+        await launchUrl(
+          pdfUri,
+          mode: LaunchMode.externalApplication,
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: true,
+            enableDomStorage: true,
+          ),
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Opening PDF in external app...'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Color(0xFF8ac63e),
+            ),
+          );
+        }
+        return true;
+      }
+    } catch (e) {
+      print('External PDF launch failed: $e');
+    }
+    return false;
+  }
+
+  Future<void> _loadPdfInWebView(String pdfUrl) async {
+    if (controller == null) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Use Google Docs viewer for better PDF handling
+      String viewerUrl = 'https://docs.google.com/gview?embedded=true&url=${Uri.encodeComponent(pdfUrl)}';
+      await controller!.loadRequest(Uri.parse(viewerUrl));
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Loading PDF in viewer...'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Color(0xFF8ac63e),
+          ),
+        );
+      }
+    } catch (e) {
+      print('PDF WebView loading failed: $e');
+      // Direct load as last resort
+      await controller!.loadRequest(Uri.parse(pdfUrl));
     }
   }
 
@@ -275,14 +272,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   void _handleRefresh() {
-    controller.reload();
+    if (controller == null) return;
+
+    setState(() {
+      isLoading = true;
+      hasError = false;
+    });
+    handledPdfUrls.clear(); // Clear handled URLs on refresh
+    controller!.reload();
   }
 
   void _handleAutoLogout() {
-    // Clear everything except API key
     ApiService.logoutKeepApiKey();
-
-    // Navigate to login screen
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false,
@@ -297,141 +298,129 @@ class _WebViewScreenState extends State<WebViewScreen> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    if (controller != null && await controller!.canGoBack()) {
+      controller!.goBack();
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: AppBar(
-          title: const Text('Reality Public School'),
-          foregroundColor: Colors.transparent,
-          automaticallyImplyLeading: false,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(0),
+          child: AppBar(
+            backgroundColor: const Color(0xFF1b375c),
+            elevation: 0,
+            automaticallyImplyLeading: false,
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          if (hasError)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Failed to load page',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+        body: Stack(
+          children: [
+            if (!isInitialized)
+              const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8ac63e)),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Please check your internet connection',
-                    style: TextStyle(
-                      fontSize: 14,
+                    SizedBox(height: 16),
+                    Text(
+                      'Initializing...',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF1b375c),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else if (hasError)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
                       color: Colors.grey,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _handleRefresh,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF8ac63e),
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Retry'),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Failed to load page',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: _fallbackToLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[600],
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Go to Login'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          else
-            WebViewWidget(controller: controller),
-
-          // Loading indicator
-          if (isLoading)
-            const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8ac63e)),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-          // Download progress indicator
-          if (isDownloading)
-            Container(
-              color: Colors.black54,
-              child: Center(
-                child: Card(
-                  margin: const EdgeInsets.all(20),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Please check your internet connection',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.download,
-                          size: 48,
-                          color: Color(0xFF8ac63e),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Downloading: $downloadFileName',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        ElevatedButton(
+                          onPressed: _handleRefresh,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF8ac63e),
+                            foregroundColor: Colors.white,
                           ),
-                          textAlign: TextAlign.center,
+                          child: const Text('Retry'),
                         ),
-                        const SizedBox(height: 16),
-                        LinearProgressIndicator(
-                          value: downloadProgress,
-                          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8ac63e)),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${(downloadProgress * 100).toInt()}%',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: _fallbackToLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[600],
+                            foregroundColor: Colors.white,
                           ),
+                          child: const Text('Go to Login'),
                         ),
                       ],
                     ),
+                  ],
+                ),
+              )
+            else if (controller != null)
+                WebViewWidget(controller: controller!),
+
+            if (isLoading && isInitialized)
+              Container(
+                color: Colors.white.withOpacity(0.8),
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8ac63e)),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading...',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF1b375c),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
