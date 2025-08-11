@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // Scrollable content overlay
           SafeArea(
-            child: SingleChildScrollView(
+            child: Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
