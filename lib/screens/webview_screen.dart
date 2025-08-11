@@ -29,6 +29,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
               isLoading = true;
               hasError = false;
             });
+
+            print(url);
+
+            // Check for logout URLs
+            if (url.contains('/mob_start.aspx') ||
+                url.contains('/logout') ||
+                url.endsWith('/x') ||
+                url.endsWith('/X') ||
+                url.toLowerCase().contains('/x9f4xf')) {
+              _handleAutoLogout();
+            }
           },
           onPageFinished: (String url) {
             setState(() {
@@ -76,6 +87,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   void _handleRefresh() {
     controller.reload();
+  }
+
+  void _handleAutoLogout() {
+    // Clear everything except API key
+    ApiService.logoutKeepApiKey();
+
+    // Navigate to login screen
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false,
+    );
   }
 
   void _fallbackToLogin() {

@@ -159,4 +159,12 @@ class ApiService {
     storage.remove('user_type');
     storage.remove('is_logged_in');
   }
+
+  // Logout but keep API key
+  static void logoutKeepApiKey() {
+    storage.remove('login_url');
+    storage.remove('user_type');
+    storage.remove('is_logged_in');
+    // Note: We're NOT removing 'api_key' here
+  }
 }
