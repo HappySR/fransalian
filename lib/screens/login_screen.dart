@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SafeArea(
             child: Column(
               children: [
-                // Reality Public School Logo - Top half
+                // Reality Public School Logo - Top half (40%)
                 SizedBox(
                   height: screenHeight * 0.4,
                   child: Center(
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                // Content starting from 50% height - Bottom half
+                // Content starting from 60% height - Bottom half
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -142,21 +142,56 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             child: TextField(
                               controller: usernameController,
+                              cursorColor: const Color(0xFFff4181),
                               style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'User Name',
                                 hintStyle: const TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 14,
+                                  fontSize: 16,
                                 ),
                                 enabledBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black54, width: 1),
+                                  borderSide: BorderSide(color: Colors.black, width: 1),
                                 ),
                                 focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black, width: 1.5),
+                                  borderSide: BorderSide(color: Color(0xFFff4181), width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Password Field
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Container(
+                            width: double.infinity,
+                            child: TextField(
+                              controller: passwordController,
+                              cursorColor: const Color(0xFFff4181),
+                              obscureText: true,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: 'Password',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black, width: 1),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Color(0xFFff4181), width: 2),
                                 ),
                               ),
                             ),
@@ -186,37 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-
-                        const SizedBox(height: 16),
-
-                        // Password Field
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
-                          child: Container(
-                            width: double.infinity,
-                            child: TextField(
-                              controller: passwordController,
-                              obscureText: true,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                              decoration: const InputDecoration(
-                                hintText: 'Password',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black54, width: 1),
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black, width: 1.5),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
 
                         const SizedBox(height: 24),
 
