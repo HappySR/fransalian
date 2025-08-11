@@ -158,15 +158,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
     try {
       // Show immediate feedback
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Loading PDF...'),
-            duration: Duration(seconds: 2),
-            backgroundColor: Color(0xFF8ac63e),
-          ),
-        );
-      }
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('Loading PDF...'),
+      //       duration: Duration(seconds: 2),
+      //       backgroundColor: Color(0xFF8ac63e),
+      //     ),
+      //   );
+      // }
 
       // Try external launch first for better PDF handling
       bool launched = await _tryExternalPdfLaunch(pdfUrl);
@@ -227,15 +227,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
       String viewerUrl = 'https://docs.google.com/gview?embedded=true&url=${Uri.encodeComponent(pdfUrl)}';
       await controller!.loadRequest(Uri.parse(viewerUrl));
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Loading PDF in viewer...'),
-            duration: Duration(seconds: 2),
-            backgroundColor: Color(0xFF8ac63e),
-          ),
-        );
-      }
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('Loading PDF in viewer...'),
+      //       duration: Duration(seconds: 2),
+      //       backgroundColor: Color(0xFF8ac63e),
+      //     ),
+      //   );
+      // }
     } catch (e) {
       print('PDF WebView loading failed: $e');
       // Direct load as last resort
