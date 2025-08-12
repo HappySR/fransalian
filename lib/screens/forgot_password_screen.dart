@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'otp_verification_screen.dart';
 import 'reset_password_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -48,18 +49,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           String? userId = result['sid'] ?? result['empid'] ?? result['id'];
 
           if (mobileNumber != null && userId != null) {
-            // Navigate to reset password screen with the mobile number
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ResetPasswordScreen(
-                  username: username,
-                  mobileNumber: mobileNumber,
-                  userId: userId,
-                  isStudent: isStudent,
+            // Generate OTP
+            Map<String, dynamic>? otpResult = await ApiService.generateOTP(username, mobileNumber, isStudent);
+
+            if (otpResult != null && otpResult['responseString'] != null) {
+              // Navigate to OTP verification screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OTPVerificationScreen(
+                    username: username,
+                    mobileNumber: mobileNumber,
+                    userId: userId,
+                    isStudent: isStudent,
+                    otpHash: otpResult['responseString'],
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              setState(() {
+                _errorMessage = 'Failed to send OTP. Please try again.';
+              });
+            }
           } else {
             setState(() {
               _errorMessage = 'Mobile number not found for this username';

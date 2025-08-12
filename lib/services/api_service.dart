@@ -341,4 +341,39 @@ class ApiService {
       return null;
     }
   }
+
+  // Generate OTP
+  static Future<Map<String, dynamic>?> generateOTP(String login, String mobileNo, bool isStudent) async {
+    try {
+      String? apiKey = await getApiKey();
+      if (apiKey == null) return null;
+
+      var headers = {
+        'Content-Type': 'application/json',
+        'APIKey': apiKey
+      };
+
+      var request = http.Request('POST', Uri.parse('$baseUrl/generateOTP'));
+      request.body = json.encode({
+        "userid": isStudent ? 0 : 0,
+        "empid": isStudent ? 0 : 0,
+        "login": login,
+        "hash": "",
+        "mobileno": mobileNo
+      });
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String responseString = await response.stream.bytesToString();
+        Map<String, dynamic> responseData = json.decode(responseString);
+        return responseData;
+      }
+      return null;
+    } catch (e) {
+      print('Error generating OTP: $e');
+      return null;
+    }
+  }
 }

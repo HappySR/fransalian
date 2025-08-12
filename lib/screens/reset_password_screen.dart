@@ -50,9 +50,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    if (newPasswordController.text.length < 6) {
+    if (newPasswordController.text.length < 5) {
       setState(() {
-        _errorMessage = 'Password must be at least 6 characters long';
+        _errorMessage = 'Password must be at least 5 characters long';
         _successMessage = null;
       });
       return;
