@@ -308,11 +308,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isStudent = !isStudent;
                                 });
                               },
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 16),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 16),
                                 child: Text(
-                                  'Login as Employee? Click here',
-                                  style: TextStyle(
+                                  isStudent
+                                      ? 'Login as Employee? Click here'
+                                      : 'Login as Student? Click here',
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 16,
