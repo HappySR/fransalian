@@ -105,10 +105,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF1b375c),
       body: SafeArea(
-        child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: screenHeight * 0.09),
+              SizedBox(height: screenHeight * 0.035),
 
               // Reality Public School Logo
               Container(
@@ -120,7 +119,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.045),
 
               // Title
               Padding(
@@ -301,7 +300,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
 
-              SizedBox(height: screenHeight * 0.06),
+              SizedBox(height: screenHeight * 0.04),
 
               // Back and Continue Buttons
               Padding(
@@ -378,7 +377,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.14),
+              Spacer(),
 
               // EDNECT Logo
               Container(
@@ -391,7 +390,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ],
           ),
-        ),
       ),
     );
   }
