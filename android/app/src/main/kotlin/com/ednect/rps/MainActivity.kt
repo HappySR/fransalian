@@ -1,4 +1,4 @@
-package com.example.ednect
+package com.ednect.rps
 
 import io.flutter.embedding.android.FlutterActivity
 
