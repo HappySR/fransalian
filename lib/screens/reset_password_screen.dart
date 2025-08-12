@@ -135,10 +135,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF1b375c),
       body: SafeArea(
-        child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: screenHeight * 0.09),
+              SizedBox(height: screenHeight * 0.035),
 
               // Reality Public School Logo
               Container(
@@ -150,7 +149,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.045),
 
               // Title
               Padding(
@@ -166,7 +165,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: screenHeight * 0.01),
 
               // User Info
               Padding(
@@ -204,7 +203,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.04),
+              SizedBox(height: screenHeight * 0.015),
 
               // New Password Field
               Padding(
@@ -265,7 +264,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.03),
+              SizedBox(height: screenHeight * 0.015),
 
               // Confirm Password Field
               Padding(
@@ -359,7 +358,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                 ),
 
-              SizedBox(height: screenHeight * 0.06),
+              SizedBox(height: screenHeight * 0.04),
 
               // Back and Reset Buttons
               Padding(
@@ -440,7 +439,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.08),
+              Spacer(),
 
               // EDNECT Logo
               Container(
@@ -450,7 +449,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
             ],
           ),
-        ),
       ),
     );
   }
