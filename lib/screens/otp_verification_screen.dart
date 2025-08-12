@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import '../services/api_service.dart';
 import 'reset_password_screen.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -24,15 +28,15 @@ class OTPVerificationScreen extends StatefulWidget {
 }
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
-  final List<TextEditingController> otpControllers = List.generate(6, (index) => TextEditingController());
-  final List<FocusNode> otpFocusNodes = List.generate(6, (index) => FocusNode());
-
+  final List<TextEditingController> _controllers = [];
+  final List<FocusNode> _focusNodes = [];
   bool _isLoading = false;
   String? _errorMessage;
   String? _successMessage;
   int _resendTimer = 30;
   Timer? _timer;
   bool _canResend = false;
+  String? _currentOtpHash;
 
   String get maskedMobile {
     if (widget.mobileNumber.length >= 4) {
@@ -48,20 +52,32 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   void initState() {
     super.initState();
+    _currentOtpHash = widget.otpHash;
+    _initializeControllers();
     _startResendTimer();
-    _listenToSMS();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    for (var controller in otpControllers) {
+    for (var controller in _controllers) {
       controller.dispose();
     }
-    for (var focusNode in otpFocusNodes) {
+    for (var focusNode in _focusNodes) {
       focusNode.dispose();
     }
     super.dispose();
+  }
+
+  void _initializeControllers() {
+    for (int i = 0; i < 6; i++) {
+      _controllers.add(TextEditingController());
+      _focusNodes.add(FocusNode());
+    }
+  }
+
+  String get _currentCode {
+    return _controllers.map((controller) => controller.text).join();
   }
 
   void _startResendTimer() {
@@ -72,47 +88,23 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_resendTimer > 0) {
-          _resendTimer--;
-        } else {
-          _canResend = true;
-          timer.cancel();
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (_resendTimer > 0) {
+            _resendTimer--;
+          } else {
+            _canResend = true;
+            timer.cancel();
+          }
+        });
+      }
     });
   }
 
-  void _listenToSMS() {
-    // This would typically use a plugin like sms_autofill
-    // For now, we'll just show a placeholder
-    // You can integrate sms_autofill plugin for automatic SMS detection
-  }
+  void _verifyOTP() async {
+    String code = _currentCode;
 
-  String _getEnteredOTP() {
-    return otpControllers.map((controller) => controller.text).join();
-  }
-
-  void _onOTPDigitChanged(int index, String value) {
-    if (value.isNotEmpty && index < 5) {
-      otpFocusNodes[index + 1].requestFocus();
-    } else if (value.isEmpty && index > 0) {
-      otpFocusNodes[index - 1].requestFocus();
-    }
-
-    // Auto-verify when all 6 digits are entered
-    if (index == 5 && value.isNotEmpty) {
-      String enteredOTP = _getEnteredOTP();
-      if (enteredOTP.length == 6) {
-        _verifyOTP();
-      }
-    }
-  }
-
-  void _verifyOTP() {
-    String enteredOTP = _getEnteredOTP();
-
-    if (enteredOTP.length != 6) {
+    if (code.length != 6) {
       setState(() {
         _errorMessage = 'Please enter complete 6-digit OTP';
         _successMessage = null;
@@ -126,11 +118,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       _successMessage = null;
     });
 
-    // For demonstration, we'll use a simple hash comparison
-    // In a real app, you'd send the OTP back to server for verification
-    Future.delayed(const Duration(seconds: 2), () {
-      // Simple verification - in real implementation, send to server
-      bool isValid = _validateOTPHash(enteredOTP);
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (!mounted) return;
+
+      bool isValid = _validateOTPHash(code);
 
       if (isValid) {
         setState(() {
@@ -138,7 +131,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           _isLoading = false;
         });
 
-        // Navigate to reset password screen after 1 second
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
             Navigator.pushReplacement(
@@ -159,24 +151,34 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           _errorMessage = 'Invalid OTP. Please try again.';
           _isLoading = false;
         });
-
-        // Clear OTP fields
-        for (var controller in otpControllers) {
-          controller.clear();
-        }
-        otpFocusNodes[0].requestFocus();
+        _clearOTP();
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'An error occurred. Please try again.';
+          _isLoading = false;
+        });
+        _clearOTP();
+      }
+    }
   }
 
   bool _validateOTPHash(String enteredOTP) {
-    // This is a simplified validation
-    // In a real app, you'd send the OTP to server for verification
-    // For now, we'll accept any 6-digit OTP as valid
-    return enteredOTP.length == 6 && RegExp(r'^\d{6}$').hasMatch(enteredOTP);
+    if (enteredOTP.length != 6 || !RegExp(r'^\d{6}$').hasMatch(enteredOTP)) {
+      return false;
+    }
+
+    // Generate SHA256 hash of entered OTP
+    var bytes = utf8.encode(enteredOTP);
+    var digest = sha256.convert(bytes);
+    String enteredOTPHash = digest.toString();
+
+    // Compare with the current hash
+    return enteredOTPHash == _currentOtpHash;
   }
 
-  void _resendOTP() {
+  void _resendOTP() async {
     if (!_canResend) return;
 
     setState(() {
@@ -184,26 +186,73 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       _errorMessage = null;
       _successMessage = null;
     });
+    _clearOTP();
 
-    // Clear current OTP
-    for (var controller in otpControllers) {
+    try {
+      // Call the API to resend OTP
+      Map<String, dynamic>? otpResult = await ApiService.generateOTP(
+          widget.username,
+          widget.mobileNumber,
+          widget.isStudent
+      );
+
+      if (mounted) {
+        if (otpResult != null && otpResult['responseString'] != null) {
+
+          _currentOtpHash = otpResult['responseString'];
+
+          setState(() {
+            _isLoading = false;
+            _successMessage = 'OTP resent successfully!';
+          });
+          _startResendTimer();
+
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              setState(() {
+                _successMessage = null;
+              });
+            }
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Failed to resend OTP. Please try again.';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'An error occurred. Please check your connection and try again.';
+        });
+      }
+    }
+  }
+
+  void _clearOTP() {
+    for (var controller in _controllers) {
       controller.clear();
     }
+    if (_focusNodes.isNotEmpty) {
+      _focusNodes[0].requestFocus();
+    }
+  }
 
-    // Simulate API call to resend OTP
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-        _successMessage = 'OTP resent successfully!';
-      });
-      _startResendTimer();
+  void _onChanged(String value, int index) {
+    if (value.length == 1 && index < 5) {
+      _focusNodes[index + 1].requestFocus();
+    } else if (value.isEmpty && index > 0) {
+      _focusNodes[index - 1].requestFocus();
+    }
 
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          _successMessage = null;
-        });
+    // Auto-verify when all 6 digits are entered
+    if (_currentCode.length == 6) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        _verifyOTP();
       });
-    });
+    }
   }
 
   @override
@@ -282,7 +331,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.04),
-                    // OTP Input Fields
+                    // OTP Input Field
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: Row(
@@ -295,22 +344,22 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: otpFocusNodes[index].hasFocus
+                                color: _focusNodes[index].hasFocus
                                     ? const Color(0xFF8ac63e)
-                                    : Colors.transparent,
+                                    : Colors.grey.shade400,
                                 width: 2,
                               ),
                             ),
                             child: TextField(
-                              controller: otpControllers[index],
-                              focusNode: otpFocusNodes[index],
+                              controller: _controllers[index],
+                              focusNode: _focusNodes[index],
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
                               style: const TextStyle(
-                                color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
@@ -319,7 +368,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
-                              onChanged: (value) => _onOTPDigitChanged(index, value),
+                              onChanged: (value) => _onChanged(value, index),
                             ),
                           );
                         }),
@@ -467,12 +516,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 ),
               ),
             ),
-            // EDNECT Logo at the very bottom with no margin/padding
+            // EDNECT Logo
             Container(
               width: 120,
               height: 80,
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero,
               child: Image.asset('assets/ednect.png', fit: BoxFit.contain),
             ),
           ],
