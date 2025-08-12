@@ -167,4 +167,178 @@ class ApiService {
     storage.remove('is_logged_in');
     // Note: We're NOT removing 'api_key' here
   }
+
+  // Get Employee Registered Mobile Number
+  static Future<Map<String, dynamic>?> getEmployeeRegisteredMobile(String login) async {
+    try {
+      String? apiKey = await getApiKey();
+      if (apiKey == null) return null;
+
+      var headers = {
+        'ApiKey': apiKey,
+        'Content-Type': 'application/json'
+      };
+
+      var request = http.Request('POST', Uri.parse('$baseUrl/GetEmployeeRegisteredMobile'));
+      request.body = json.encode({
+        "login": login,
+        "pass": "string",
+        "empid": "string",
+        "mobile_no": "string",
+        "value": "string"
+      });
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String responseString = await response.stream.bytesToString();
+        Map<String, dynamic> responseData = json.decode(responseString);
+
+        // Extract data from the response structure
+        if (responseData['statusCode'] == 'Success' &&
+            responseData['data'] != null &&
+            responseData['data'].isNotEmpty) {
+          var employeeData = responseData['data'][0];
+          return {
+            'statusCode': responseData['statusCode'],
+            'responseValue': 1,
+            'mobile': employeeData['mobile_no'],
+            'mobileNo': employeeData['mobile_no'],
+            'mobile_no': employeeData['mobile_no'],
+            'empid': employeeData['sid'] // Using sid as employee ID
+          };
+        }
+        return responseData;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting employee mobile: $e');
+      return null;
+    }
+  }
+
+// Get Student Registered Mobile Number
+  static Future<Map<String, dynamic>?> getStudentRegisteredMobile(String login) async {
+    try {
+      String? apiKey = await getApiKey();
+      if (apiKey == null) return null;
+
+      var headers = {
+        'ApiKey': apiKey,
+        'Content-Type': 'application/json'
+      };
+
+      var request = http.Request('POST', Uri.parse('$baseUrl/GetStudentRegisteredMobile'));
+      request.body = json.encode({
+        "login": login,
+        "pass": "string",
+        "sid": "string",
+        "mobile_no": "string",
+        "value": "string"
+      });
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String responseString = await response.stream.bytesToString();
+        Map<String, dynamic> responseData = json.decode(responseString);
+
+        // Extract data from the response structure
+        if (responseData['statusCode'] == 'Success' &&
+            responseData['data'] != null &&
+            responseData['data'].isNotEmpty) {
+          var studentData = responseData['data'][0];
+          return {
+            'statusCode': responseData['statusCode'],
+            'responseValue': 1,
+            'mobile': studentData['mobile_no'],
+            'mobileNo': studentData['mobile_no'],
+            'mobile_no': studentData['mobile_no'],
+            'sid': studentData['sid']
+          };
+        }
+        return responseData;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting student mobile: $e');
+      return null;
+    }
+  }
+
+// Change Employee Password
+  static Future<Map<String, dynamic>?> changeEmployeePassword(String login, String newPassword, String empId) async {
+    try {
+      String? apiKey = await getApiKey();
+      if (apiKey == null) return null;
+
+      String hash = generateHash(newPassword);
+
+      var headers = {
+        'ApiKey': apiKey,
+        'Content-Type': 'application/json'
+      };
+
+      var request = http.Request('POST', Uri.parse('$baseUrl/ChangeEmployeePasswordData'));
+      request.body = json.encode({
+        "login": login,
+        "pass": hash,
+        "empid": empId,
+        "mobile_no": "string",
+        "value": "string"
+      });
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String responseString = await response.stream.bytesToString();
+        Map<String, dynamic> responseData = json.decode(responseString);
+        return responseData;
+      }
+      return null;
+    } catch (e) {
+      print('Error changing employee password: $e');
+      return null;
+    }
+  }
+
+// Change Student Password
+  static Future<Map<String, dynamic>?> changeStudentPassword(String login, String newPassword, String sid) async {
+    try {
+      String? apiKey = await getApiKey();
+      if (apiKey == null) return null;
+
+      String hash = generateHash(newPassword);
+
+      var headers = {
+        'ApiKey': apiKey,
+        'Content-Type': 'application/json'
+      };
+
+      var request = http.Request('POST', Uri.parse('$baseUrl/ChangeStudentPassword'));
+      request.body = json.encode({
+        "login": login,
+        "pass": hash,
+        "sid": sid,
+        "mobile_no": "string",
+        "value": "string"
+      });
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String responseString = await response.stream.bytesToString();
+        Map<String, dynamic> responseData = json.decode(responseString);
+        return responseData;
+      }
+      return null;
+    } catch (e) {
+      print('Error changing student password: $e');
+      return null;
+    }
+  }
 }
