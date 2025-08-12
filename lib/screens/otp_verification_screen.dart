@@ -39,14 +39,21 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   String? _currentOtpHash;
 
   String get maskedMobile {
-    if (widget.mobileNumber.length >= 4) {
-      return widget.mobileNumber.replaceRange(
-        2,
-        widget.mobileNumber.length - 2,
-        '*' * (widget.mobileNumber.length - 4),
-      );
-    }
-    return widget.mobileNumber;
+    // Handle multiple mobile numbers (comma separated)
+    List<String> numbers = widget.mobileNumber.split(',');
+    List<String> maskedNumbers = numbers.map((number) {
+      String trimmedNumber = number.trim();
+      if (trimmedNumber.length >= 4) {
+        return trimmedNumber.replaceRange(
+          2,
+          trimmedNumber.length - 2,
+          '*' * (trimmedNumber.length - 4),
+        );
+      }
+      return trimmedNumber;
+    }).toList();
+
+    return maskedNumbers.join(', ');
   }
 
   @override

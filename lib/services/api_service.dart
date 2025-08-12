@@ -200,13 +200,15 @@ class ApiService {
             responseData['data'] != null &&
             responseData['data'].isNotEmpty) {
           var employeeData = responseData['data'][0];
+          String mobileNumbers = employeeData['mobile_no'] ?? '';
+
           return {
             'statusCode': responseData['statusCode'],
             'responseValue': 1,
-            'mobile': employeeData['mobile_no'],
-            'mobileNo': employeeData['mobile_no'],
-            'mobile_no': employeeData['mobile_no'],
-            'empid': employeeData['sid'] // Using sid as employee ID
+            'mobile': mobileNumbers,
+            'mobileNo': mobileNumbers,
+            'mobile_no': mobileNumbers,
+            'empid': employeeData['empid'] ?? employeeData['sid'] ?? '1'
           };
         }
         return responseData;
@@ -250,13 +252,15 @@ class ApiService {
             responseData['data'] != null &&
             responseData['data'].isNotEmpty) {
           var studentData = responseData['data'][0];
+          String mobileNumbers = studentData['mobile_no'] ?? '';
+
           return {
             'statusCode': responseData['statusCode'],
             'responseValue': 1,
-            'mobile': studentData['mobile_no'],
-            'mobileNo': studentData['mobile_no'],
-            'mobile_no': studentData['mobile_no'],
-            'sid': studentData['sid']
+            'mobile': mobileNumbers,
+            'mobileNo': mobileNumbers,
+            'mobile_no': mobileNumbers,
+            'sid': studentData['sid'] ?? studentData['empid'] ?? '1'
           };
         }
         return responseData;
@@ -281,7 +285,7 @@ class ApiService {
         'Content-Type': 'application/json'
       };
 
-      var request = http.Request('POST', Uri.parse('$baseUrl/ChangeEmployeePasswordData'));
+      var request = http.Request('POST', Uri.parse('$baseUrl/ChangeEmployeePassword'));
       request.body = json.encode({
         "login": login,
         "pass": hash,
