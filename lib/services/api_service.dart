@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'package:crypto/crypto.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://api.realitypublicschool.in/api';
-  static const String clientCode = '68634';
+  static const String baseUrl = 'https://api.fransalianhsjonai.ac.in/api';
+  static const String clientCode = dotenv.env['CLIENT_CODE'];
   static final GetStorage storage = GetStorage();
 
   // Get API Key
