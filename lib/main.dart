@@ -1,4 +1,4 @@
-import 'package:ednect/screens/splash_screen.dart';
+import 'package:the_reality_public_school/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';

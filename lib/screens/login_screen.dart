@@ -1,4 +1,4 @@
-import 'package:ednect/screens/forgot_password_screen.dart';
+import 'package:the_reality_public_school/screens/forgot_password_screen.dart';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'webview_screen.dart';
