@@ -63,7 +63,6 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Reality Public School Logo
             Container(
               width: 250,
               height: 150,

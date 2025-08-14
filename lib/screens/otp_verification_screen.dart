@@ -278,7 +278,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: screenHeight * 0.035),
-                    // Reality Public School Logo
                     Container(
                       width: 180,
                       height: 100,

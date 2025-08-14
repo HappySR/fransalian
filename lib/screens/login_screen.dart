@@ -1,6 +1,6 @@
-import 'package:the_reality_public_school/screens/forgot_password_screen.dart';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'forgot_password_screen.dart';
 import 'webview_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -93,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
           SafeArea(
             child: Column(
               children: [
-                // Reality Public School Logo - Top half (40%)
                 SizedBox(
                   height: screenHeight * 0.4,
                   child: Center(
@@ -122,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Container(
                             width: double.infinity,
                             child: Text(
-                              'The Reality Public School ! ${isStudent ? 'STUDENT' : 'EMPLOYEE'}',
+                              'Fransalian HS School, Jonai ! ${isStudent ? 'STUDENT' : 'EMPLOYEE'}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,

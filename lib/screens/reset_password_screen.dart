@@ -146,7 +146,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             children: [
               SizedBox(height: screenHeight * 0.035),
 
-              // Reality Public School Logo
               Container(
                 width: 180,
                 height: 100,
