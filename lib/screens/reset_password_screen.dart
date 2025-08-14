@@ -57,9 +57,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    if (newPasswordController.text.length < 5) {
+    if (newPasswordController.text.length < 4) {
       setState(() {
-        _errorMessage = 'Password must be at least 5 characters long';
+        _errorMessage = 'Password must be at least 4 characters long';
         _successMessage = null;
       });
       return;
@@ -140,7 +140,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFA41034),
+      backgroundColor: Colors.white,
       body: SafeArea(
           child: Column(
             children: [
@@ -163,7 +163,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 child: Text(
                   'Reset Password',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
                   ),
@@ -180,7 +180,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.black.withAlpha(25),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -188,7 +188,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       Text(
                         '${widget.isStudent ? 'Student' : 'Employee'}: ${widget.username}',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -198,7 +198,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       Text(
                         'Mobile: $maskedMobile',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Colors.black54,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -220,7 +220,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const Text(
                       'New Password',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
@@ -245,7 +245,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             color: Colors.black38,
                             fontSize: 16,
                           ),
-                          border: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFA41034),
+                              width: 1.5, // thickness of border
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 15,
                             vertical: 15,
@@ -281,7 +287,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const Text(
                       'Confirm Password',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
@@ -306,7 +312,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             color: Colors.black38,
                             fontSize: 16,
                           ),
-                          border: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFA41034),
+                              width: 1.5, // thickness of border
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 15,
                             vertical: 15,
@@ -342,13 +354,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: _errorMessage != null
-                          ? Colors.red.withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
+                          ? Colors.red.withAlpha(25)
+                          : Colors.green.withAlpha(25),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: _errorMessage != null
-                            ? Colors.red.withOpacity(0.3)
-                            : Colors.green.withOpacity(0.3),
+                            ? Colors.red.withAlpha(76)
+                            : Colors.green.withAlpha(76),
                       ),
                     ),
                     child: Text(

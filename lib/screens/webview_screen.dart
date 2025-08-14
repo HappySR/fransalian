@@ -398,7 +398,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
             if (isLoading && isInitialized)
               Container(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha(204),
                 child: const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

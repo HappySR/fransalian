@@ -285,13 +285,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: _errorMessage != null
-                          ? Colors.red.withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
+                          ? Colors.red.withAlpha(25)
+                          : Colors.green.withAlpha(25),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                           color: _errorMessage != null
-                              ? Colors.red.withOpacity(0.3)
-                              : Colors.green.withOpacity(0.3)
+                              ? Colors.red.withAlpha(76)
+                              : Colors.green.withAlpha(76)
                       ),
                     ),
                     child: Text(

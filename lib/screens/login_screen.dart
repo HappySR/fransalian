@@ -206,9 +206,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               margin: const EdgeInsets.only(top: 8),
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
+                                color: Colors.red.withAlpha(25),
                                 borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.red.withOpacity(0.3)),
+                                border: Border.all(color: Colors.red.withAlpha(76)),
                               ),
                               child: Text(
                                 _errorMessage!,

@@ -267,7 +267,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFA41034),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -293,7 +293,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       child: Text(
                         'Verify OTP',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
                         ),
@@ -307,7 +307,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       child: Text(
                         'Enter the 6-digit code sent to $maskedMobile',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Colors.black54,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
@@ -322,13 +322,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.black.withAlpha(25),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           '${widget.isStudent ? 'Student' : 'Employee'}: ${widget.username}',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
@@ -390,7 +390,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                           Text(
                             'Didn\'t receive OTP? ',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: Colors.black54,
                               fontSize: 14,
                             ),
                           ),
@@ -402,8 +402,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                                   : 'Resend in ${_resendTimer}s',
                               style: TextStyle(
                                 color: _canResend
-                                    ? const Color(0xFFA41034)
-                                    : Colors.white54,
+                                    ? Colors.black
+                                    : Colors.grey,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -422,13 +422,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: _errorMessage != null
-                                ? Colors.red.withOpacity(0.1)
-                                : Colors.green.withOpacity(0.1),
+                                ? Colors.red.withAlpha(25)
+                                : Colors.green.withAlpha(25),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: _errorMessage != null
-                                  ? Colors.red.withOpacity(0.3)
-                                  : Colors.green.withOpacity(0.3),
+                                  ? Colors.red.withAlpha(76)
+                                  : Colors.green.withAlpha(76),
                             ),
                           ),
                           child: Text(
