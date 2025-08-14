@@ -47,7 +47,7 @@ dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/reality_logo_non_transparent.png"
+  image_path: "assets/fransalian_logo_non_transparent.png"
 
 dev_dependencies:
   flutter_test:

@@ -283,7 +283,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       width: 180,
                       height: 100,
                       child: Image.asset(
-                        'assets/reality_logo.png',
+                        'assets/fransalian_logo.png',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -527,7 +527,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             Container(
               width: 120,
               height: 80,
-              child: Image.asset('assets/ednect.png', fit: BoxFit.contain),
+              child: Image.asset('assets/vasp.png', fit: BoxFit.contain),
             ),
           ],
         ),

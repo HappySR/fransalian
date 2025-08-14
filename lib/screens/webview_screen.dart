@@ -139,7 +139,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Future<void> _loadUrlWithAuth(String url) async {
     if (controller == null) return;
 
-    if (currentApiKey != null && url.contains('realitypublicschool.in')) {
+    if (currentApiKey != null && url.contains('fransalianhsjonai.ac.in')) {
       // For school domain URLs, add API key to headers
       await controller!.loadRequest(
         Uri.parse(url),
