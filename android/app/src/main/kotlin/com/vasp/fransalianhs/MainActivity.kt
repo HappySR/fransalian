@@ -1,4 +1,4 @@
-package com.ednect.rps
+package com.vasp.fransalianhs
 
 import io.flutter.embedding.android.FlutterActivity
 

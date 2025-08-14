@@ -6,7 +6,7 @@ import 'package:crypto/crypto.dart';
 
 class ApiService {
   static const String baseUrl = 'https://api.fransalianhsjonai.ac.in/api';
-  static const String clientCode = dotenv.env['CLIENT_CODE'];
+  static final String? clientCode = dotenv.env['CLIENT_CODE'];
   static final GetStorage storage = GetStorage();
 
   // Get API Key
