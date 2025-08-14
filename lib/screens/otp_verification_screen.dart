@@ -267,7 +267,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1b375c),
+      backgroundColor: const Color(0xFFA41034),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

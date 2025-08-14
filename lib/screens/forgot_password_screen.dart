@@ -103,7 +103,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1b375c),
+      backgroundColor: Colors.white,
       body: SafeArea(
           child: Column(
             children: [
@@ -126,7 +126,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: Text(
                   'Forgot Password',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
                   ),
@@ -142,7 +142,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: Text(
                   'Enter your username to reset password',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.black54,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
                   ),
@@ -159,7 +159,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.grey.withAlpha(100),
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Row(
@@ -183,7 +183,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               child: Text(
                                 'STUDENT',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: isStudent ? Colors.white : Colors.black54,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -211,7 +211,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               child: Text(
                                 'EMPLOYEE',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: isStudent ? Colors.black54 : Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -236,7 +236,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const Text(
                       'User Name',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
@@ -254,14 +254,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           color: Colors.black54,
                           fontSize: 16,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Enter your username',
-                          hintStyle: TextStyle(
+                          hintStyle: const TextStyle(
                             color: Colors.black38,
                             fontSize: 16,
                           ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFA41034),
+                              width: 1.5, // thickness of border
+                            ),
+                            borderRadius: BorderRadius.circular(8), // optional rounded corners
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                         ),
                       ),
                     ),

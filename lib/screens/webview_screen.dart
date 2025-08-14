@@ -314,7 +314,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(0),
           child: AppBar(
-            backgroundColor: const Color(0xFF1b375c),
+            backgroundColor: const Color(0xFFA41034),
             elevation: 0,
             automaticallyImplyLeading: false,
           ),
@@ -335,7 +335,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF1b375c),
+                        color: Color(0xFFA41034),
                       ),
                     ),
                   ],
@@ -412,7 +412,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF1b375c),
+                          color: Color(0xFFA41034),
                         ),
                       ),
                     ],

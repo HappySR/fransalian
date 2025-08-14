@@ -140,7 +140,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1b375c),
+      backgroundColor: const Color(0xFFA41034),
       body: SafeArea(
           child: Column(
             children: [

@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: double.infinity,
             height: double.infinity,
             decoration: const BoxDecoration(
-              color: Color(0xFF1b375c),
+              color: Color(0xFFA41034),
               image: DecorationImage(
                 image: AssetImage('assets/login.png'),
                 fit: BoxFit.cover,
@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Fransalian HS School, Jonai ! ${isStudent ? 'STUDENT' : 'EMPLOYEE'}',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               controller: usernameController,
                               cursorColor: const Color(0xFFff4181),
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                               ),
@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               cursorColor: const Color(0xFFff4181),
                               obscureText: true,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                               ),
@@ -243,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: const Text(
                                     'Forgot password?',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -314,7 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ? 'Login as Employee? Click here'
                                       : 'Login as Student? Click here',
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 16,
                                   ),
