@@ -163,7 +163,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
       //     const SnackBar(
       //       content: Text('Loading PDF...'),
       //       duration: Duration(seconds: 2),
-      //       backgroundColor: Color(0xFF8ac63e),
+      //       backgroundColor: Color(0xFFA41034),
       //     ),
       //   );
       // }
@@ -203,7 +203,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             const SnackBar(
               content: Text('Opening PDF in external app...'),
               duration: Duration(seconds: 2),
-              backgroundColor: Color(0xFF8ac63e),
+              backgroundColor: Color(0xFFA41034),
             ),
           );
         }
@@ -232,7 +232,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
       //     const SnackBar(
       //       content: Text('Loading PDF in viewer...'),
       //       duration: Duration(seconds: 2),
-      //       backgroundColor: Color(0xFF8ac63e),
+      //       backgroundColor: Color(0xFFA41034),
       //     ),
       //   );
       // }
@@ -327,7 +327,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8ac63e)),
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFA41034)),
                     ),
                     SizedBox(height: 16),
                     Text(
@@ -374,7 +374,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                         ElevatedButton(
                           onPressed: _handleRefresh,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF8ac63e),
+                            backgroundColor: const Color(0xFFA41034),
                             foregroundColor: Colors.white,
                           ),
                           child: const Text('Retry'),
@@ -404,7 +404,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8ac63e)),
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFA41034)),
                       ),
                       SizedBox(height: 16),
                       Text(

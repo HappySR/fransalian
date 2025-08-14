@@ -407,7 +407,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8ac63e),
+                          color: const Color(0xFFA41034),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: ElevatedButton(

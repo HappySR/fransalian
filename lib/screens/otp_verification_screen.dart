@@ -351,7 +351,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 color: _focusNodes[index].hasFocus
-                                    ? const Color(0xFF8ac63e)
+                                    ? const Color(0xFFA41034)
                                     : Colors.grey.shade400,
                                 width: 2,
                               ),
@@ -402,7 +402,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                                   : 'Resend in ${_resendTimer}s',
                               style: TextStyle(
                                 color: _canResend
-                                    ? const Color(0xFF8ac63e)
+                                    ? const Color(0xFFA41034)
                                     : Colors.white54,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -483,7 +483,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                             child: Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF8ac63e),
+                                color: const Color(0xFFA41034),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: ElevatedButton(

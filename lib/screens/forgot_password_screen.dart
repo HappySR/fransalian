@@ -176,7 +176,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           child: Container(
                             height: 50,
                             decoration: BoxDecoration(
-                              color: isStudent ? const Color(0xFF8ac63e) : Colors.transparent,
+                              color: isStudent ? const Color(0xFFA41034) : Colors.transparent,
                               borderRadius: BorderRadius.circular(25),
                             ),
                             child: Center(
@@ -204,7 +204,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           child: Container(
                             height: 50,
                             decoration: BoxDecoration(
-                              color: !isStudent ? const Color(0xFF8ac63e) : Colors.transparent,
+                              color: !isStudent ? const Color(0xFFA41034) : Colors.transparent,
                               borderRadius: BorderRadius.circular(25),
                             ),
                             child: Center(
@@ -340,7 +340,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8ac63e),
+                          color: const Color(0xFFA41034),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: ElevatedButton(

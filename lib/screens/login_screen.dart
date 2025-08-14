@@ -253,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: 40,
                                   width: 100,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF8ac63e),
+                                    color: const Color(0xFFA41034),
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   child: ElevatedButton(

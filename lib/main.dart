@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Fransalian HS School',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8ac63e)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFA41034)),
         useMaterial3: true,
       ),
       home: const SplashScreen(), // Start with splash screen
